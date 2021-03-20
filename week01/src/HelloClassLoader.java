@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 public class HelloClassLoader extends ClassLoader {
 
@@ -42,7 +43,8 @@ public class HelloClassLoader extends ClassLoader {
      * @throws IOException 抛出IO异常，让上层调用者处理
      */
     private byte[] getByteCode(String name) throws IOException {
-        BufferedInputStream bis = new BufferedInputStream(new FileInputStream("week01/src/" + name + ".xlass"));
+        String postfix = ".xlass";
+        BufferedInputStream bis = new BufferedInputStream(Objects.requireNonNull(this.getClass().getClassLoader().getResourceAsStream(name + postfix)));
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
         byte[] buffer = new byte[1024];
