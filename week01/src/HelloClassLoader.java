@@ -1,4 +1,5 @@
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -45,25 +46,36 @@ public class HelloClassLoader extends ClassLoader {
      * @throws IOException
      */
     private byte[] getByteCode(String name) throws IOException {
-        FileInputStream fis = new FileInputStream("week01/src/" + name + ".xlass");
-        BufferedInputStream bis = new BufferedInputStream(fis);
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream("week01/src/" + name + ".xlass"));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        List<Byte> byteList = new ArrayList<>();
         byte[] buffer = new byte[1024];
         int len;
-        int offset = 0;
         while((len = bis.read(buffer)) != -1) {
-            for(int i =0; i < len; i++) {
-                byteList.add((byte)(255 - buffer[i + offset])); // 解码
-            }
-            offset += len;
+            bos.write(buffer, 0, len);
         }
 
+        byte[] res = bos.toByteArray();
+        bos.close();
         bis.close();
-        byte[] res = new byte[offset];
-        for (int i = 0; i < offset; i++) {
-            res[i] = byteList.get(i);
-        }
         return res;
+
+//        List<Byte> byteList = new ArrayList<>();
+//        byte[] buffer = new byte[1024];
+//        int len;
+//        int offset = 0;
+//        while((len = bis.read(buffer)) != -1) {
+//            for(int i =0; i < len; i++) {
+//                byteList.add((byte)(255 - buffer[i + offset])); // 解码
+//            }
+//            offset += len;
+//        }
+//
+//        bis.close();
+//        byte[] res = new byte[offset];
+//        for (int i = 0; i < offset; i++) {
+//            res[i] = byteList.get(i);
+//        }
+//        return res;
     }
 }
