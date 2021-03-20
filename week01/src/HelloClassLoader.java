@@ -15,8 +15,7 @@ public class HelloClassLoader extends ClassLoader {
             Class<?> helloClass = new HelloClassLoader().findClass("Hello");
 
             // new 实例
-            Constructor constructor = helloClass.getConstructor();
-            Object instance = constructor.newInstance();
+            Object instance = helloClass.getConstructor().newInstance();
 
             // 调用hello方法
             Method helloMethod = helloClass.getDeclaredMethod("hello");
@@ -43,7 +42,7 @@ public class HelloClassLoader extends ClassLoader {
      * 将经过加密的文件读入后返回解密后的byte数组
      * @param name 需要读进来的文件名 本题为 "Hello"
      * @return 解码后的byte数组
-     * @throws IOException
+     * @throws IOException 抛出IO异常，让上层调用者处理
      */
     private byte[] getByteCode(String name) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream("week01/src/" + name + ".xlass"));
@@ -52,6 +51,9 @@ public class HelloClassLoader extends ClassLoader {
         byte[] buffer = new byte[1024];
         int len;
         while((len = bis.read(buffer)) != -1) {
+            for(int i = 0; i < len; i++) {
+                buffer[i] = (byte)(255 - buffer[i]);
+            }
             bos.write(buffer, 0, len);
         }
 
@@ -59,23 +61,5 @@ public class HelloClassLoader extends ClassLoader {
         bos.close();
         bis.close();
         return res;
-
-//        List<Byte> byteList = new ArrayList<>();
-//        byte[] buffer = new byte[1024];
-//        int len;
-//        int offset = 0;
-//        while((len = bis.read(buffer)) != -1) {
-//            for(int i =0; i < len; i++) {
-//                byteList.add((byte)(255 - buffer[i + offset])); // 解码
-//            }
-//            offset += len;
-//        }
-//
-//        bis.close();
-//        byte[] res = new byte[offset];
-//        for (int i = 0; i < offset; i++) {
-//            res[i] = byteList.get(i);
-//        }
-//        return res;
     }
 }
